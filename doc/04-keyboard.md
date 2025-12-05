@@ -1,0 +1,50 @@
+# `4` Клавиатура
+Для упрощения работы с клавиатурой вы можете использовать `Keyboard`.
+
+```dart
+final keyboard = Keyboard.inlineKeyboard([
+  // 1-я строка с 3-мя кнопками
+  [
+    Keyboard.button.callback('default', 'color:default'),
+    Keyboard.button.callback('positive', 'color:positive', intent: ButtonIntent.positive),
+    Keyboard.button.callback('negative', 'color:negative', intent: ButtonIntent.negative),
+  ],
+  // 2-я строка с 1-й кнопкой
+  [Keyboard.button.link('Открыть Max', 'https://max.ru')],
+]);
+```
+### Типы кнопок
+
+#### Callback
+```dart
+Keyboard.button.callback(text, payload, {intent});
+```
+Добавляет callback-кнопку. При нажатии на неё сервер Max отправляет обновление `message_callback`.
+
+#### Link
+```dart
+Keyboard.button.link(text, url);
+```
+Добавляет кнопку-ссылку. При нажатии на неё пользователю будет предложено открыть ссылку в новой вкладке.
+
+#### RequestContact
+```dart
+Keyboard.button.requestContact(text);
+```
+Добавляет кнопку запроса контакта. При нажатии на неё боту будет отправлено сообщение с номером телефона, полным именем и почтой пользователя во вложении в формате `VCF`.
+
+#### RequestGeoLocation
+```dart
+Keyboard.button.requestGeoLocation(text, {quick});
+```
+Добавляет кнопку запроса геолокации. При нажатии на неё боту будет отправлено сообщение с геолокацией, которую укажет пользователь.
+
+#### Chat
+```dart
+Keyboard.button.chat(text, chatTitle, {
+  chatDescription,
+  startPayload,
+  uuid,
+});
+```
+Добавляет кнопку создания чата. При нажатии на неё будет создан новый чат с ботом и пользователем.

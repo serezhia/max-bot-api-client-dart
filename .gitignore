@@ -1,8 +1,25 @@
-node_modules
-dist
+# Dart/Flutter
+.dart_tool/
+.packages
+build/
+pubspec.lock
+.pub/
+.pub-cache/
+doc/api/
 
+# Generated files
+*.g.dart
+*.freezed.dart
+
+# IDE
+.idea
+.DS_Store
+*.iml
+
+# Logs
 *.log
 *.env
 
-.idea
-.DS_Store
+# Node (legacy)
+node_modules
+dist
