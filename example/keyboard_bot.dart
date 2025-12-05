@@ -130,6 +130,25 @@ void main() async {
     },
   ]);
 
+  // Fallback handler for unrecognized messages
+  bot.on(UpdateType.messageCreated, [
+    (ctx, next) async {
+      return ctx.reply(
+        'Available commands:\n'
+        '/callback - Show callback keyboard\n'
+        '/geoLocation - Request location\n'
+        '/contact - Request contact\n'
+        '/createChat <title> - Create chat',
+      );
+    },
+  ]);
+
+  // Error handling
+  bot.catch_((error, ctx) {
+    // ignore: avoid_print
+    print('Error processing update: $error');
+  });
+
   // ignore: avoid_print
   print('Starting keyboard bot...');
   await bot.start();

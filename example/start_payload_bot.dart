@@ -17,6 +17,19 @@ void main() async {
     },
   ]);
 
+  // Handle any message
+  bot.on(UpdateType.messageCreated, [
+    (ctx, next) async {
+      return ctx.reply('Hello! This bot only handles bot_started events with payloads.');
+    },
+  ]);
+
+  // Error handling
+  bot.catch_((error, ctx) {
+    // ignore: avoid_print
+    print('Error processing update: $error');
+  });
+
   // ignore: avoid_print
   print('Starting start payload bot...');
   await bot.start();

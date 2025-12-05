@@ -35,6 +35,19 @@ void main() async {
 
   bot.command('start', [(ctx, next) => ctx.reply('Hello!')]);
 
+  // Handle any other message
+  bot.on(UpdateType.messageCreated, [
+    (ctx, next) async {
+      return ctx.reply('Send /start to begin');
+    },
+  ]);
+
+  // Error handling
+  bot.catch_((error, ctx) {
+    // ignore: avoid_print
+    print('Error processing update: $error');
+  });
+
   // ignore: avoid_print
   print('Starting custom context bot...');
   await bot.start();
