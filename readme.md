@@ -4,7 +4,7 @@
 
 ## Документация
 
-В [документации](https://github.com/serezhia/max-bot-api-client-dart/tree/master/docs) вы можете найти подробные инструкции по использованию фреймворка.
+В [документации](https://github.com/serezhia/max-bot-api-client-dart/tree/master/doc) вы можете найти подробные инструкции по использованию фреймворка.
 
 ## Быстрый старт
 
