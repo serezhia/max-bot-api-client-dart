@@ -1,14 +1,14 @@
 # `4` Клавиатура
-Для упрощения работы с клавиатурой вы можете использовать KeyboardBuilder.
+Для упрощения работы с клавиатурой вы можете использовать `Keyboard`.
 
-```typescript
-const keyboard = Keyboard.inlineKeyboard([
+```dart
+final keyboard = Keyboard.inlineKeyboard([
   // 1-я строка с 3-мя кнопками
   [
     Keyboard.button.callback('default', 'color:default'),
-    Keyboard.button.callback('positive', 'color:positive', { intent: 'positive' }),
-    Keyboard.button.callback('negative', 'color:negative', { intent: 'negative' }),
-  ], 
+    Keyboard.button.callback('positive', 'color:positive', intent: ButtonIntent.positive),
+    Keyboard.button.callback('negative', 'color:negative', intent: ButtonIntent.negative),
+  ],
   // 2-я строка с 1-й кнопкой
   [Keyboard.button.link('Открыть Max', 'https://max.ru')],
 ]);
@@ -16,37 +16,35 @@ const keyboard = Keyboard.inlineKeyboard([
 ### Типы кнопок
 
 #### Callback
-```typescript
-button.callback(text: string, payload: string, extra?: { 
-  intent?: 'default' | 'positive' | 'negative' 
-});
+```dart
+Keyboard.button.callback(text, payload, {intent});
 ```
 Добавляет callback-кнопку. При нажатии на неё сервер Max отправляет обновление `message_callback`.
 
 #### Link
-```typescript
-button.link(text: string, url: string);
+```dart
+Keyboard.button.link(text, url);
 ```
 Добавляет кнопку-ссылку. При нажатии на неё пользователю будет предложено открыть ссылку в новой вкладке.
 
 #### RequestContact
-```typescript
-button.requestContact(text: string);
+```dart
+Keyboard.button.requestContact(text);
 ```
-Добавляет кнопку запроса контакта. При нажатии на неё боту будет отправлено сообщение с номером телефона, полным имененм и почтой пользователя во вложении в формате `VCF`.
+Добавляет кнопку запроса контакта. При нажатии на неё боту будет отправлено сообщение с номером телефона, полным именем и почтой пользователя во вложении в формате `VCF`.
 
 #### RequestGeoLocation
-```typescript
-button.requestGeoLocation(text: string, extra?: { quick?: boolean });
+```dart
+Keyboard.button.requestGeoLocation(text, {quick});
 ```
 Добавляет кнопку запроса геолокации. При нажатии на неё боту будет отправлено сообщение с геолокацией, которую укажет пользователь.
 
 #### Chat
-```typescript
-button.chat(text: string, chatTitle: string, extra?: { 
-  chat_description?: string | null;
-  start_payload?: string | null;
-  uuid?: string | null; 
+```dart
+Keyboard.button.chat(text, chatTitle, {
+  chatDescription,
+  startPayload,
+  uuid,
 });
 ```
 Добавляет кнопку создания чата. При нажатии на неё будет создан новый чат с ботом и пользователем.

@@ -1,55 +1,39 @@
 # `3` Отправка сообщений с вложениями
-Для упрощения работы с вложениями существует класс `Attachment` с функцией `toJson`, которая возвращает отформатированный объект вложения. От этого класса наследуются классы всех типов вложений.
+Для упрощения работы с вложениями существуют классы-помощники в пакете `max_bot_api`, которые позволяют создавать вложения для отправки.
 
 ## Отправка файлов
 
 ### При помощи токена
 Подходит для файлов, которые уже были загружены в Max:
-```typescript
-const image = new ImageAttachment({ token: 'existingImageToken' });
-await ctx.reply('', { attachments: [image.toJson()] });
+```dart
+final image = ImageAttachmentHelper(token: 'existingImageToken');
+await ctx.reply('', SendMessageExtra(attachments: [image.toJson()]));
 
-const video = new VideoAttachment({ token: 'existingVideoToken' });
-await ctx.reply('', { attachments: [video.toJson()] });
+final video = VideoAttachmentHelper(token: 'existingVideoToken');
+await ctx.reply('', SendMessageExtra(attachments: [video.toJson()]));
 
-const audio = new AudioAttachment({ token: 'existingAudioToken' });
-await ctx.reply('', { attachments: [audio.toJson()] });
+final audio = AudioAttachmentHelper(token: 'existingAudioToken');
+await ctx.reply('', SendMessageExtra(attachments: [audio.toJson()]));
 
-const file = new FileAttachment({ token: 'existingFileToken' });
-await ctx.reply('', { attachments: [file.toJson()] });
-```
-
-### Загрузка новых файлов
-Вы можете загрузить файлы на сервера Max, используя методы `ctx.api`:
-- `uploadImage`
-- `uploadVideo`
-- `uploadAudio`
-- `uploadFile`
-
-Эти методы возвращают экземпляр класса `Attachment`.
-
-```typescript
-const image = await ctx.api.uploadImage({ source: '/path/to/image' });
-await ctx.reply('Это фото загружено из файла', {
-  attachments: [image.toJson()],
-});
+final file = FileAttachmentHelper(token: 'existingFileToken');
+await ctx.reply('', SendMessageExtra(attachments: [file.toJson()]));
 ```
 
 ### При помощи ссылки
-Пока что доступно только для изображений:
-```typescript
-const image = await ctx.api.uploadImage({ url: 'https://upload.wikimedia.org/wikipedia/commons/Image.png' });
-await ctx.reply('', { attachments: [image.toJson()] });
+Доступно для изображений:
+```dart
+final image = await ctx.api.uploadImage(url: 'https://upload.wikimedia.org/wikipedia/commons/Image.png');
+await ctx.reply('', SendMessageExtra(attachments: [image.toJson()]));
 ```
 
 ## Отправка других типов вложений
-```typescript
-const sticker = new StickerAttachment({ code: "stickerCode" });
-await ctx.reply('', { attachments: [sticker.toJson()] });
+```dart
+final sticker = StickerAttachmentHelper(code: 'stickerCode');
+await ctx.reply('', SendMessageExtra(attachments: [sticker.toJson()]));
 
-const location = new LocationAttachment({ lon: 0, lat: 0 });
-await ctx.reply('', { attachments: [location.toJson()] });
+final location = LocationAttachmentHelper(latitude: 0, longitude: 0);
+await ctx.reply('', SendMessageExtra(attachments: [location.toJson()]));
 
-const share = new ShareAttachment({ url: "messagePublicUrl", token: "attachmentToken" });
-await ctx.reply('', { attachments: [share.toJson()] });
+final share = ShareAttachmentHelper(url: 'messagePublicUrl', token: 'attachmentToken');
+await ctx.reply('', SendMessageExtra(attachments: [share.toJson()]));
 ```

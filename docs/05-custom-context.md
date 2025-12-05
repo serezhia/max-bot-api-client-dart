@@ -1,24 +1,39 @@
 # `5` Расширение контекста
 
-Вы можете расширить контекст, который приходит при каждом обновлении:
-```typescript
-interface MyContext extends Context {
-  isAdmin?: boolean;
+Вы можете расширить контекст, создав свой класс, унаследованный от `Context`:
+```dart
+class MyContext extends Context {
+  bool isAdmin = false;
+
+  MyContext(super.update, super.api, [super.botInfo]);
 }
 
-const ADMIN_ID = 12345;
+const adminId = 12345;
 
-const bot = new Bot<MyContext>(process.env.BOT_TOKEN);
+void main() async {
+  final bot = Bot<MyContext>(
+    Platform.environment['BOT_TOKEN']!,
+    config: BotConfig(
+      contextFactory: (update, api, botInfo) => MyContext(update, api, botInfo),
+    ),
+  );
 
-bot.use(async (ctx, next) => {
-  ctx.isAdmin = ctx.user?.user_id === ADMIN_ID;
-  return next();
-});
+  bot.use([
+    (ctx, next) async {
+      ctx.isAdmin = ctx.user?.userId == adminId;
+      return next();
+    },
+  ]);
 
-bot.command('start', async (ctx) => {
-  if (ctx.isAdmin) {
-    return ctx.reply('Привет, админ!');
-  }
-  return ctx.reply('Привет!');
-});
+  bot.command('start', [
+    (ctx, next) async {
+      if (ctx.isAdmin) {
+        return ctx.reply('Привет, админ!');
+      }
+      return ctx.reply('Привет!');
+    },
+  ]);
+
+  await bot.start();
+}
 ```
