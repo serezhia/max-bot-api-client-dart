@@ -100,7 +100,8 @@ class Composer<Ctx extends Context> implements MiddlewareObj<Ctx> {
       filter(UpdateType.messageCallback, [
         (Ctx ctx, NextFn next) async {
           if (ctx.update is! MessageCallbackUpdate) return next();
-          final payload = (ctx.update as MessageCallbackUpdate).callback.payload;
+          final payload =
+              (ctx.update as MessageCallbackUpdate).callback.payload;
           if (payload == null) return next();
 
           for (final trigger in normalizedTriggers) {
@@ -126,13 +127,7 @@ class Composer<Ctx extends Context> implements MiddlewareObj<Ctx> {
 
   /// Flatten middleware
   static MiddlewareFn<C> flatten<C extends Context>(Middleware<C> mw) {
-    if (mw is MiddlewareFn<C>) {
-      return mw;
-    }
-    if (mw is MiddlewareObj<C>) {
-      return (C ctx, NextFn next) => mw.middleware()(ctx, next);
-    }
-    throw ArgumentError('Invalid middleware type');
+    return mw;
   }
 
   /// Concatenate two middlewares
@@ -192,9 +187,7 @@ class Composer<Ctx extends Context> implements MiddlewareObj<Ctx> {
     final markup = message.body.markup;
     if (markup != null) {
       for (final m in markup) {
-        if (m is UserMentionMarkup &&
-            m.from == 0 &&
-            m.userId == myId) {
+        if (m is UserMentionMarkup && m.from == 0 && m.userId == myId) {
           return text.substring(m.length).trim();
         }
       }

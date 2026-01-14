@@ -12,7 +12,8 @@ import 'core/network/polling.dart';
 /// Bot configuration
 class BotConfig<Ctx extends Context> {
   final ClientOptions? clientOptions;
-  final Context Function(Update update, Api api, BotInfo? botInfo)? contextFactory;
+  final Context Function(Update update, Api api, BotInfo? botInfo)?
+      contextFactory;
 
   const BotConfig({
     this.clientOptions,
@@ -23,8 +24,16 @@ class BotConfig<Ctx extends Context> {
 /// Launch options
 class LaunchOptions {
   final List<UpdateType>? allowedUpdates;
+  final int? marker;
+  final void Function(int)? onMarkerChanged;
+  final bool dropPendingUpdates;
 
-  const LaunchOptions({this.allowedUpdates});
+  const LaunchOptions({
+    this.allowedUpdates,
+    this.marker,
+    this.onMarkerChanged,
+    this.dropPendingUpdates = false,
+  });
 }
 
 /// Bot class for creating and running Max bots
@@ -35,8 +44,9 @@ class Bot<Ctx extends Context> extends Composer<Ctx> {
   BotInfo? botInfo;
   Polling? _polling;
   bool _pollingIsStarted = false;
+  int? _startTime;
 
-  late void Function(Object error, Ctx ctx) _handleError;
+  late void Function(Object error, StackTrace stackTrace, Ctx ctx) _handleError;
 
   Bot(
     String token, {
@@ -47,14 +57,15 @@ class Bot<Ctx extends Context> extends Composer<Ctx> {
     _handleError = _defaultErrorHandler;
   }
 
-  void _defaultErrorHandler(Object error, Ctx ctx) {
+  void _defaultErrorHandler(Object error, StackTrace stackTrace, Ctx ctx) {
     // ignore: avoid_print
     print('Unhandled error while processing ${ctx.update}');
     throw error;
   }
 
   /// Set custom error handler
-  Bot<Ctx> catch_(void Function(Object error, Ctx ctx) handler) {
+  Bot<Ctx> catch_(
+      void Function(Object error, StackTrace stackTrace, Ctx ctx) handler) {
     _handleError = handler;
     return this;
   }
@@ -66,9 +77,20 @@ class Bot<Ctx extends Context> extends Composer<Ctx> {
     }
 
     _pollingIsStarted = true;
+    if (options?.dropPendingUpdates == true) {
+      _startTime = DateTime.now().millisecondsSinceEpoch;
+      // ignore: avoid_print
+      print(
+          'Bot started with dropPendingUpdates: true. Start time: $_startTime');
+    }
 
     botInfo ??= await api.getMyInfo();
-    _polling = Polling(api, options?.allowedUpdates);
+    _polling = Polling(
+      api,
+      allowedUpdates: options?.allowedUpdates,
+      marker: options?.marker,
+      onMarkerChanged: options?.onMarkerChanged,
+    );
 
     await _polling!.loop(_handleUpdate);
   }
@@ -84,6 +106,15 @@ class Bot<Ctx extends Context> extends Composer<Ctx> {
   }
 
   Future<void> _handleUpdate(Update update) async {
+    if (_startTime != null && update.timestamp < _startTime!) {
+      // ignore: avoid_print
+      print('Skipping update (timestamp: ${update.timestamp})');
+      return;
+    }
+
+    // ignore: avoid_print
+    print(
+        'Processing update: ${update.timestamp} (type: ${update.updateType})');
     Ctx ctx;
     if (_config.contextFactory != null) {
       ctx = _config.contextFactory!(update, api, botInfo) as Ctx;
@@ -93,8 +124,8 @@ class Bot<Ctx extends Context> extends Composer<Ctx> {
 
     try {
       await middleware()(ctx, () => Future.value());
-    } catch (err) {
-      _handleError(err, ctx);
+    } catch (err, stackTrace) {
+      _handleError(err, stackTrace, ctx);
     }
   }
 }

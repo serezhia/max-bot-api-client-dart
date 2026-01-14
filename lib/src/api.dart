@@ -344,11 +344,53 @@ class Api {
   }
 
   /// Upload image
-  Future<ImageAttachmentHelper> uploadImage({String? url}) async {
+  Future<ImageAttachmentHelper> uploadImage({
+    String? url,
+    List<int>? bytes,
+    String? filename,
+  }) async {
     if (url != null) {
       return ImageAttachmentHelper(url: url);
     }
-    // For file upload, you would need to implement file handling
-    throw UnimplementedError('File upload not yet implemented');
+    if (bytes != null) {
+      final uploadInfo = await raw.uploads.getUploadUrl(type: UploadType.image);
+      final response = await raw.client.upload(
+        uploadInfo.url,
+        bytes,
+        filename: filename ?? 'image.png',
+      );
+      // The upload response might not contain the token directly if it's just a success message.
+      // However, the token from getUploadUrl is the one we need to use for the attachment.
+      // If the upload response contains a token, we use it, otherwise we fall back to the initial token.
+      var token = response['token'] as String?;
+
+      // Check for photos map in response (common for image uploads)
+      if (token == null && response['photos'] is Map) {
+        final photos = response['photos'] as Map<String, dynamic>;
+        if (photos.isNotEmpty) {
+          final photoData = photos.values.first;
+          if (photoData is Map && photoData.containsKey('token')) {
+            token = photoData['token'] as String?;
+          }
+        }
+      }
+
+      token ??= uploadInfo.token;
+
+      // Fallback: try to extract from URL query parameters if token is still null
+      if (token == null) {
+        try {
+          final uri = Uri.parse(uploadInfo.url);
+          token = uri.queryParameters['photoIds'];
+        } catch (_) {
+          // ignore
+        }
+      }
+
+      return ImageAttachmentHelper(
+        token: token,
+      );
+    }
+    throw ArgumentError('Either url or bytes must be provided');
   }
 }

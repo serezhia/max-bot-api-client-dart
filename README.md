@@ -19,7 +19,7 @@
 
 ```yaml
 dependencies:
-  max_bot_api: ^0.2.1
+  max_bot_api: 0.0.2
 ```
 
 Или установите с помощью команды:

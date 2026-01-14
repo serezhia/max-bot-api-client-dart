@@ -43,19 +43,19 @@ void main() async {
 
   // Callback keyboard command
   bot.command('callback', [
-    (ctx, next) {
+    (ctx, next) async {
       final keyboard = Keyboard.inlineKeyboard([
         [
           Keyboard.button.callback('default', 'color:default'),
-          Keyboard.button
-              .callback('positive', 'color:positive', intent: ButtonIntent.positive),
-          Keyboard.button
-              .callback('negative', 'color:negative', intent: ButtonIntent.negative),
+          Keyboard.button.callback('positive', 'color:positive',
+              intent: ButtonIntent.positive),
+          Keyboard.button.callback('negative', 'color:negative',
+              intent: ButtonIntent.negative),
         ],
         ...defaultKeyboard(),
       ]);
-      return ctx.reply('Callback keyboard',
-          SendMessageExtra(attachments: [keyboard]));
+      await ctx.reply(
+          'Callback keyboard', SendMessageExtra(attachments: [keyboard]));
     },
   ]);
 
@@ -63,7 +63,7 @@ void main() async {
   bot.action(RegExp(r'color:(.+)'), [
     (ctx, next) async {
       final color = ctx.match?.group(1) ?? 'unknown';
-      return ctx.answerOnCallback(AnswerOnCallbackExtra(
+      await ctx.answerOnCallback(AnswerOnCallbackExtra(
         message: {
           'text': 'Your choice: $color color',
           'attachments': [],
@@ -74,13 +74,13 @@ void main() async {
 
   // GeoLocation keyboard command
   bot.command('geoLocation', [
-    (ctx, next) {
+    (ctx, next) async {
       final keyboard = Keyboard.inlineKeyboard([
         [Keyboard.button.requestGeoLocation('Send geoLocation')],
         ...defaultKeyboard(),
       ]);
-      return ctx.reply('GeoLocation keyboard',
-          SendMessageExtra(attachments: [keyboard]));
+      await ctx.reply(
+          'GeoLocation keyboard', SendMessageExtra(attachments: [keyboard]));
     },
   ]);
 
@@ -89,19 +89,20 @@ void main() async {
     (ctx, next) async {
       final location = ctx.location;
       if (location == null) return next();
-      return ctx.reply('Your location: ${location.latitude}, ${location.longitude}');
+      await ctx
+          .reply('Your location: ${location.latitude}, ${location.longitude}');
     },
   ]);
 
   // Contact keyboard command
   bot.command('contact', [
-    (ctx, next) {
+    (ctx, next) async {
       final keyboard = Keyboard.inlineKeyboard([
         [Keyboard.button.requestContact('Send my contact')],
         ...defaultKeyboard(),
       ]);
-      return ctx
-          .reply('Contact keyboard', SendMessageExtra(attachments: [keyboard]));
+      await ctx.reply(
+          'Contact keyboard', SendMessageExtra(attachments: [keyboard]));
     },
   ]);
 
@@ -110,7 +111,7 @@ void main() async {
     (ctx, next) async {
       final contactInfo = ctx.contactInfo;
       if (contactInfo == null) return next();
-      return ctx.reply(
+      await ctx.reply(
           'Your name: ${contactInfo.fullName}\nYour phone: ${contactInfo.tel}');
     },
   ]);
@@ -120,20 +121,21 @@ void main() async {
     (ctx, next) async {
       final chatTitle = ctx.match?.group(1)?.trim();
       if (chatTitle == null || chatTitle.isEmpty) {
-        return ctx.reply('Enter chat title after command');
+        await ctx.reply('Enter chat title after command');
+        return;
       }
       final keyboard = Keyboard.inlineKeyboard([
         [Keyboard.button.chat('Create chat "$chatTitle"', chatTitle)],
       ]);
-      return ctx.reply('Create chat keyboard',
-          SendMessageExtra(attachments: [keyboard]));
+      await ctx.reply(
+          'Create chat keyboard', SendMessageExtra(attachments: [keyboard]));
     },
   ]);
 
   // Fallback handler for unrecognized messages
   bot.on(UpdateType.messageCreated, [
     (ctx, next) async {
-      return ctx.reply(
+      await ctx.reply(
         'Available commands:\n'
         '/callback - Show callback keyboard\n'
         '/geoLocation - Request location\n'

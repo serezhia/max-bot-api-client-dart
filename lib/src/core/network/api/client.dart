@@ -97,9 +97,11 @@ class Client {
       }
     });
 
-    final finalUri = queryParams.isEmpty
-        ? uri
-        : uri.replace(queryParameters: queryParams);
+    final finalUri =
+        queryParams.isEmpty ? uri : uri.replace(queryParameters: queryParams);
+
+    // ignore: avoid_print
+    print('API Request: ${options.method.value} $finalUri');
 
     final headers = <String, String>{
       'Authorization': _token,
@@ -137,9 +139,14 @@ class Client {
             body: options.body != null ? jsonEncode(options.body) : null,
           );
       }
-    } on Exception {
+    } on Exception catch (e) {
+      // ignore: avoid_print
+      print('API Request failed: $e');
       rethrow;
     }
+
+    // ignore: avoid_print
+    print('API Response: ${response.statusCode} ${response.body}');
 
     if (response.statusCode == 401) {
       return const ApiResponse(
@@ -156,6 +163,42 @@ class Client {
         : jsonDecode(response.body) as Map<String, dynamic>;
 
     return ApiResponse(status: response.statusCode, data: data);
+  }
+
+  /// Upload file content to a URL
+  Future<Map<String, dynamic>> upload(
+    String url,
+    List<int> bytes, {
+    String? filename,
+  }) async {
+    final uri = Uri.parse(url);
+    final request = http.MultipartRequest('POST', uri);
+
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'data',
+        bytes,
+        filename: filename ?? 'file',
+      ),
+    );
+
+    final response = await request.send();
+    final responseBody = await response.stream.bytesToString();
+
+    // ignore: avoid_print
+    print('API Upload Response: ${response.statusCode} $responseBody');
+
+    if (response.statusCode >= 400) {
+      throw Exception(
+        'Failed to upload file: ${response.statusCode}, body: $responseBody',
+      );
+    }
+
+    if (responseBody.isEmpty) {
+      return {};
+    }
+
+    return jsonDecode(responseBody) as Map<String, dynamic>;
   }
 
   /// Close the HTTP client

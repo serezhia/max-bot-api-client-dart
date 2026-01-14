@@ -20,4 +20,4 @@ abstract class MiddlewareObj<Ctx extends Context> {
 }
 
 /// Middleware type - can be function or object
-typedef Middleware<Ctx extends Context> = Object;
+typedef Middleware<Ctx extends Context> = MiddlewareFn<Ctx>;

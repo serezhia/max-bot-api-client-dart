@@ -38,7 +38,7 @@ void main() async {
   // Handle any other message
   bot.on(UpdateType.messageCreated, [
     (ctx, next) async {
-      return ctx.reply('Send /start to begin');
+      await ctx.reply('Send /start to begin');
     },
   ]);
 
