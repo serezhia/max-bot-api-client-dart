@@ -19,8 +19,8 @@ void main() async {
 
   // Handle bot started event
   bot.on(UpdateType.botStarted, [
-    (ctx, next) => ctx.reply(
-        'Привет! Отправь мне команду /ping, чтобы сыграть в пинг-понг'),
+    (ctx, next) => ctx
+        .reply('Привет! Отправь мне команду /ping, чтобы сыграть в пинг-понг'),
   ]);
 
   // Handle /ping command
@@ -50,7 +50,7 @@ void main() async {
   ]);
 
   // Error handling
-  bot.catch_((error, ctx) {
+  bot.catch_((error, trace, ctx) {
     // ignore: avoid_print
     print('Error: $error');
   });

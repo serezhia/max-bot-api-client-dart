@@ -146,7 +146,7 @@ void main() async {
   ]);
 
   // Error handling
-  bot.catch_((error, ctx) {
+  bot.catch_((error, trace, ctx) {
     // ignore: avoid_print
     print('Error processing update: $error');
   });
