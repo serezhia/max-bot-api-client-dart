@@ -107,14 +107,9 @@ class Bot<Ctx extends Context> extends Composer<Ctx> {
 
   Future<void> _handleUpdate(Update update) async {
     if (_startTime != null && update.timestamp < _startTime!) {
-      // ignore: avoid_print
-      print('Skipping update (timestamp: ${update.timestamp})');
       return;
     }
 
-    // ignore: avoid_print
-    print(
-        'Processing update: ${update.timestamp} (type: ${update.updateType})');
     Ctx ctx;
     if (_config.contextFactory != null) {
       ctx = _config.contextFactory!(update, api, botInfo) as Ctx;

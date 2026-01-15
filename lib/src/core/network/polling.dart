@@ -37,17 +37,10 @@ class Polling {
             ? null
             : _allowedUpdates.map((t) => t.value).join(',');
 
-        // ignore: avoid_print
-        print('Fetching updates with marker: $_marker');
-
         final response = await _api.getUpdates(
           types: typesString,
           marker: _marker,
         );
-
-        // ignore: avoid_print
-        print(
-            'Received ${response.updates.length} updates, new marker: ${response.marker}');
 
         if (_marker != response.marker) {
           _marker = response.marker;

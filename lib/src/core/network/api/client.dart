@@ -100,9 +100,6 @@ class Client {
     final finalUri =
         queryParams.isEmpty ? uri : uri.replace(queryParameters: queryParams);
 
-    // ignore: avoid_print
-    print('API Request: ${options.method.value} $finalUri');
-
     final headers = <String, String>{
       'Authorization': _token,
       if (options.body != null) 'Content-Type': 'application/json',
@@ -145,9 +142,6 @@ class Client {
       rethrow;
     }
 
-    // ignore: avoid_print
-    print('API Response: ${response.statusCode} ${response.body}');
-
     if (response.statusCode == 401) {
       return const ApiResponse(
         status: 401,
@@ -184,9 +178,6 @@ class Client {
 
     final response = await request.send();
     final responseBody = await response.stream.bytesToString();
-
-    // ignore: avoid_print
-    print('API Upload Response: ${response.statusCode} $responseBody');
 
     if (response.statusCode >= 400) {
       throw Exception(
