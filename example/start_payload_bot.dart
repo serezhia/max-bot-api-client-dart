@@ -13,19 +13,20 @@ void main() async {
   // Handle bot started event with payload
   bot.on(UpdateType.botStarted, [
     (ctx, next) async {
-      return ctx.reply('Bot started with payload: ${ctx.startPayload}');
+      await ctx.reply('Bot started with payload: ${ctx.startPayload}');
     },
   ]);
 
   // Handle any message
   bot.on(UpdateType.messageCreated, [
     (ctx, next) async {
-      return ctx.reply('Hello! This bot only handles bot_started events with payloads.');
+      await ctx.reply(
+          'Hello! This bot only handles bot_started events with payloads.');
     },
   ]);
 
   // Error handling
-  bot.catch_((error, ctx) {
+  bot.catch_((error, trace, ctx) {
     // ignore: avoid_print
     print('Error processing update: $error');
   });

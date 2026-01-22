@@ -19,7 +19,11 @@ enum UpdateType {
   chatTitleChanged('chat_title_changed'),
   messageConstructionRequest('message_construction_request'),
   messageConstructed('message_constructed'),
-  messageChatCreated('message_chat_created');
+  messageChatCreated('message_chat_created'),
+  dialogCleared('dialog_cleared'),
+  botStopped('bot_stopped'),
+  dialogRemoved('dialog_removed'),
+  dialogUnmuted('dialog_unmuted');
 
   final String value;
   const UpdateType(this.value);
@@ -58,6 +62,10 @@ sealed class Update {
         MessageConstructionRequestUpdate.fromJson(json),
       UpdateType.messageConstructed => MessageConstructedUpdate.fromJson(json),
       UpdateType.messageChatCreated => MessageChatCreatedUpdate.fromJson(json),
+      UpdateType.dialogCleared => DialogClearedUpdate.fromJson(json),
+      UpdateType.botStopped => BotStoppedUpdate.fromJson(json),
+      UpdateType.dialogRemoved => DialogRemovedUpdate.fromJson(json),
+      UpdateType.dialogUnmuted => DialogUnmutedUpdate.fromJson(json),
     };
   }
 }
@@ -544,6 +552,126 @@ class MessageChatCreatedUpdate extends Update {
       'chat': chat.toJson(),
       'message_id': messageId,
       'start_payload': startPayload,
+    };
+  }
+}
+
+/// Dialog cleared update
+class DialogClearedUpdate extends Update {
+  final int chatId;
+  final User user;
+
+  const DialogClearedUpdate({
+    required super.timestamp,
+    required this.chatId,
+    required this.user,
+  }) : super(updateType: UpdateType.dialogCleared);
+
+  factory DialogClearedUpdate.fromJson(Map<String, dynamic> json) {
+    return DialogClearedUpdate(
+      timestamp: json['timestamp'] as int,
+      chatId: json['chat_id'] as int,
+      user: User.fromJson(json['user'] as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'update_type': updateType.value,
+      'timestamp': timestamp,
+      'chat_id': chatId,
+      'user': user.toJson(),
+    };
+  }
+}
+
+/// Bot stopped update
+class BotStoppedUpdate extends Update {
+  final int chatId;
+  final User user;
+
+  const BotStoppedUpdate({
+    required super.timestamp,
+    required this.chatId,
+    required this.user,
+  }) : super(updateType: UpdateType.botStopped);
+
+  factory BotStoppedUpdate.fromJson(Map<String, dynamic> json) {
+    return BotStoppedUpdate(
+      timestamp: json['timestamp'] as int,
+      chatId: json['chat_id'] as int,
+      user: User.fromJson(json['user'] as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'update_type': updateType.value,
+      'timestamp': timestamp,
+      'chat_id': chatId,
+      'user': user.toJson(),
+    };
+  }
+}
+
+/// Dialog removed update
+class DialogRemovedUpdate extends Update {
+  final int chatId;
+  final User user;
+
+  const DialogRemovedUpdate({
+    required super.timestamp,
+    required this.chatId,
+    required this.user,
+  }) : super(updateType: UpdateType.dialogRemoved);
+
+  factory DialogRemovedUpdate.fromJson(Map<String, dynamic> json) {
+    return DialogRemovedUpdate(
+      timestamp: json['timestamp'] as int,
+      chatId: json['chat_id'] as int,
+      user: User.fromJson(json['user'] as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'update_type': updateType.value,
+      'timestamp': timestamp,
+      'chat_id': chatId,
+      'user': user.toJson(),
+    };
+  }
+}
+
+/// Dialog unmuted update
+class DialogUnmutedUpdate extends Update {
+  final int chatId;
+  final User user;
+
+  const DialogUnmutedUpdate({
+    required super.timestamp,
+    required this.chatId,
+    required this.user,
+  }) : super(updateType: UpdateType.dialogUnmuted);
+
+  factory DialogUnmutedUpdate.fromJson(Map<String, dynamic> json) {
+    return DialogUnmutedUpdate(
+      timestamp: json['timestamp'] as int,
+      chatId: json['chat_id'] as int,
+      user: User.fromJson(json['user'] as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'update_type': updateType.value,
+      'timestamp': timestamp,
+      'chat_id': chatId,
+      'user': user.toJson(),
     };
   }
 }

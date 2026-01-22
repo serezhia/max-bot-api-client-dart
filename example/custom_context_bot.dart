@@ -38,12 +38,12 @@ void main() async {
   // Handle any other message
   bot.on(UpdateType.messageCreated, [
     (ctx, next) async {
-      return ctx.reply('Send /start to begin');
+      await ctx.reply('Send /start to begin');
     },
   ]);
 
   // Error handling
-  bot.catch_((error, ctx) {
+    bot.catch_((error, trace, ctx) {
     // ignore: avoid_print
     print('Error processing update: $error');
   });

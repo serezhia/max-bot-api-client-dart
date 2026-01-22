@@ -6,9 +6,9 @@ import 'modules/modules.dart';
 
 /// Raw API class providing access to all API modules
 class RawApi {
-  final Client _client;
+  final Client client;
 
-  RawApi(this._client);
+  RawApi(this.client);
 
   BotsApi? _bots;
   ChatsApi? _chats;
@@ -17,18 +17,18 @@ class RawApi {
   UploadsApi? _uploads;
 
   /// Bots API
-  BotsApi get bots => _bots ??= BotsApi(_client);
+  BotsApi get bots => _bots ??= BotsApi(client);
 
   /// Chats API
-  ChatsApi get chats => _chats ??= ChatsApi(_client);
+  ChatsApi get chats => _chats ??= ChatsApi(client);
 
   /// Messages API
-  MessagesApi get messages => _messages ??= MessagesApi(_client);
+  MessagesApi get messages => _messages ??= MessagesApi(client);
 
   /// Subscriptions API
   SubscriptionsApi get subscriptions =>
-      _subscriptions ??= SubscriptionsApi(_client);
+      _subscriptions ??= SubscriptionsApi(client);
 
   /// Uploads API
-  UploadsApi get uploads => _uploads ??= UploadsApi(_client);
+  UploadsApi get uploads => _uploads ??= UploadsApi(client);
 }
