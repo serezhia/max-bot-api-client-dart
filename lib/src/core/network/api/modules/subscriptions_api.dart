@@ -36,7 +36,14 @@ class GetUpdatesResponse {
   factory GetUpdatesResponse.fromJson(Map<String, dynamic> json) {
     return GetUpdatesResponse(
       updates: (json['updates'] as List<dynamic>)
-          .map((e) => Update.fromJson(e as Map<String, dynamic>))
+          .map((e) {
+            try {
+              return Update.fromJson(e as Map<String, dynamic>);
+            } catch (_) {
+              return null;
+            }
+          })
+          .whereType<Update>()
           .toList(),
       marker: json['marker'] as int,
     );

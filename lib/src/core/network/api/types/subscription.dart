@@ -22,7 +22,8 @@ enum UpdateType {
   messageChatCreated('message_chat_created'),
   dialogCleared('dialog_cleared'),
   botStopped('bot_stopped'),
-  dialogRemoved('dialog_removed');
+  dialogRemoved('dialog_removed'),
+  dialogUnmuted('dialog_unmuted');
 
   final String value;
   const UpdateType(this.value);
@@ -64,6 +65,7 @@ sealed class Update {
       UpdateType.dialogCleared => DialogClearedUpdate.fromJson(json),
       UpdateType.botStopped => BotStoppedUpdate.fromJson(json),
       UpdateType.dialogRemoved => DialogRemovedUpdate.fromJson(json),
+      UpdateType.dialogUnmuted => DialogUnmutedUpdate.fromJson(json),
     };
   }
 }
@@ -627,6 +629,36 @@ class DialogRemovedUpdate extends Update {
 
   factory DialogRemovedUpdate.fromJson(Map<String, dynamic> json) {
     return DialogRemovedUpdate(
+      timestamp: json['timestamp'] as int,
+      chatId: json['chat_id'] as int,
+      user: User.fromJson(json['user'] as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'update_type': updateType.value,
+      'timestamp': timestamp,
+      'chat_id': chatId,
+      'user': user.toJson(),
+    };
+  }
+}
+
+/// Dialog unmuted update
+class DialogUnmutedUpdate extends Update {
+  final int chatId;
+  final User user;
+
+  const DialogUnmutedUpdate({
+    required super.timestamp,
+    required this.chatId,
+    required this.user,
+  }) : super(updateType: UpdateType.dialogUnmuted);
+
+  factory DialogUnmutedUpdate.fromJson(Map<String, dynamic> json) {
+    return DialogUnmutedUpdate(
       timestamp: json['timestamp'] as int,
       chatId: json['chat_id'] as int,
       user: User.fromJson(json['user'] as Map<String, dynamic>),
